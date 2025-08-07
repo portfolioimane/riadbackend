@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\Admin\GalleryController;
 
 use App\Http\Controllers\Api\Customer\ServicesController;
 use App\Http\Controllers\Api\Customer\RoomsController;
+use App\Http\Controllers\Api\Customer\PaymentController;
 
 
 use App\Http\Controllers\Api\Customer\BookingController;
@@ -46,6 +47,10 @@ Route::get('services/{service}', [ServicesController::class, 'show']); // Fetch
 Route::get('/rooms', [RoomsController::class, 'getAllRooms']);
 Route::get('/popular-rooms', [RoomsController::class, 'getPopularRooms']);
 Route::get('rooms/{room}', [RoomsController::class, 'show']); // Fetch 
+
+Route::post('/create-payment-intent', [PaymentController::class, 'createPaymentIntent']);
+Route::post('/paypal/verify', [PaymentController::class, 'verifyPaypalPayment']);
+
 
 
 
