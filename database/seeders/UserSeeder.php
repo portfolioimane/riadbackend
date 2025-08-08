@@ -14,7 +14,7 @@ class UserSeeder extends Seeder
 {
     \App\Models\User::create([
         'name' => 'Admin',
-        'email' => 'ima@gmail.com',
+        'email' => 'emacoding.g@gmail.com',
         'password' => bcrypt('password'),
         'role' => 'admin',
     ]);

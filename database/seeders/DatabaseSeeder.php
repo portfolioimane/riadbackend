@@ -27,6 +27,9 @@ class DatabaseSeeder extends Seeder
 
        $this->call(PaymentSettingsSeeder::class);
 
+              $this->call(SmtpSettingsSeeder::class);
+
+
 
 
 

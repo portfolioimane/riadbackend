@@ -22,6 +22,7 @@ class Booking extends Model
         'total',
         'status',
         'paid_amount',
+        'payment_fee_status',
     ];
 
     // Format the date without the time part (if needed)

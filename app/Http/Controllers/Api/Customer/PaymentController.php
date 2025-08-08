@@ -18,6 +18,12 @@ class PaymentController extends Controller
             'amount' => 'required|integer|min:50',
         ]);
 
+        Log::info('Stripe PaymentIntent request received', [
+    'booking_id' => $request->booking_id,
+    'amount' => $request->amount,
+]);
+
+
         // 🔐 Fetch Stripe settings from DB
         $stripe = PaymentSettings::where('type', 'stripe')->first();
 

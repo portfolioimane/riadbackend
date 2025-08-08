@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\Admin\ServicesController as AdminServicesController
 use App\Http\Controllers\Api\Admin\RoomsController as AdminRoomsController;
 
 use App\Http\Controllers\Api\Admin\PaymentSettingsController;
+use App\Http\Controllers\Api\Admin\SmtpSettingsController;
 
 
 use App\Http\Controllers\Api\Admin\FinanceController;
@@ -31,6 +32,12 @@ use App\Http\Controllers\Api\Admin\BookingsController as BackendBookingsControll
 use App\Http\Controllers\Api\Admin\BusinessHoursController;
 
 use App\Http\Controllers\Api\Customer\AuthController;
+
+
+use App\Http\Controllers\Api\Auth\PasswordResetController;
+
+Route::post('/password/email', [PasswordResetController::class, 'sendResetLinkEmail']);
+Route::post('/password/reset', [PasswordResetController::class, 'resetPassword']);
 
 
 
@@ -61,6 +68,11 @@ Route::post('/paypal/verify', [PaymentController::class, 'verifyPaypalPayment'])
 Route::get('/unavailable-dates', [BookingController::class, 'getUnavailableDates']);
 Route::post('/book', [BookingController::class, 'createBooking']);
 
+Route::put('/bookings/{id}/payment', [BookingController::class, 'updatePaymentStatus']);
+
+Route::get('/payment-settings', [PaymentSettingsController::class, 'index']);
+Route::get('/smtp-settings', [SmtpSettingsController::class, 'index']);
+
 
 Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function () {
 
@@ -71,9 +83,12 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
 
 
 
-Route::get('/payment-settings', [PaymentSettingsController::class, 'index']);
 Route::get('/payment-settings/{id}', [PaymentSettingsController::class, 'show']);
 Route::put('/payment-settings/{id}', [PaymentSettingsController::class, 'update']);
+
+
+Route::get('/smtp-settings/{id}', [SmtpSettingsController::class, 'show']);
+Route::put('/smtp-settings/{id}', [SmtpSettingsController::class, 'update']);
 
 
 

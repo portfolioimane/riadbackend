@@ -24,6 +24,7 @@ return new class extends Migration
             $table->decimal('total', 10, 2); // Add total amount column
             $table->enum('status', ['Pending', 'Confirmed', 'Cancelled', 'Completed'])->default('pending'); // Order status            $table->timestamps();
             $table->decimal('paid_amount', 10, 2)->default(0); // Add paid_amount column
+              $table->enum('payment_fee_status', ['pending', 'paid', 'failed', 'refunded'])->default('pending'); // ✅ New column
             $table->timestamps();
         });
     }

@@ -8,6 +8,9 @@ use App\Models\Booking;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 
+use App\Mail\BookingConfirmed;
+use Illuminate\Support\Facades\Mail;
+
 class BookingController extends Controller
 {
     /**
@@ -97,10 +100,7 @@ $conflict = Booking::where('room_id', $validated['room_id'])
         $status = 'Pending';
         $paidAmount = 0;
 
-        if (in_array(strtolower($validated['payment_method']), ['stripe', 'paypal'])) {
-            $status = 'Confirmed';
-            $paidAmount = $validated['total'];
-        }
+     
 
         // Create the booking
         $booking = Booking::create([
@@ -123,4 +123,58 @@ $conflict = Booking::where('room_id', $validated['room_id'])
             'booking' => $booking,
         ], 201);
     }
+
+
+
+
+public function updatePaymentStatus(Request $request, $id)
+{
+    Log::info("UpdatePaymentStatus called for booking ID: {$id}", [
+        'request_data' => $request->all(),
+    ]);
+
+    $booking = Booking::with('room')->findOrFail($id);
+    Log::info("Booking loaded", ['booking' => $booking->toArray()]);
+    Log::info("Room relation loaded", ['room' => $booking->room ? $booking->room->toArray() : null]);
+
+    $method = strtolower($booking->payment_method);
+
+    if ($method !== 'cash') {
+        if ($request->has('payment_fee_status')) {
+            $booking->payment_fee_status = $request->payment_fee_status;
+            Log::info("Payment fee status updated to: {$request->payment_fee_status}");
+        }
+
+        if ($request->has('paid_fee')) {
+            $booking->paid_amount = $request->paid_fee;
+            Log::info("Paid amount updated to: {$request->paid_fee}");
+        }
+
+        $booking->save();
+
+        // Refresh and reload room after update
+        $booking->refresh();
+        $booking->load('room');
+
+        Log::info("Booking after update", ['booking' => $booking->toArray()]);
+        Log::info("Room after update", ['room' => $booking->room ? $booking->room->toArray() : null]);
+    }
+
+    try {
+        Mail::to($booking->email)->queue(new BookingConfirmed($booking));
+        Log::info("Booking notification email queued for {$booking->email}");
+    } catch (\Exception $e) {
+        Log::error("Failed to queue booking notification email: " . $e->getMessage());
+    }
+
+    return response()->json([
+        'message' => 'Booking updated and email sent successfully.',
+        'booking' => $booking,
+    ]);
+}
+
+
+
+
+
 }
