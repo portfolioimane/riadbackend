@@ -69,18 +69,24 @@ class BookingController extends Controller
             'payment_method' => 'required|string',
             'total' => 'required|numeric|min:0',
         ]);
+ $checkIn = Carbon::parse($validated['check_in']);
+    $checkOut = Carbon::parse($validated['check_out']);
 
-        $checkIn = Carbon::parse($validated['check_in']);
-        $checkOut = Carbon::parse($validated['check_out']);
+    // Log check-in and check-out dates
+    Log::info('Received booking dates:', [
+        'check_in' => $checkIn->toDateString(),
+        'check_out' => $checkOut->toDateString(),
+    ]);
 
         // Conflict check with inclusive date ranges (checkout date included)
-   $conflict = Booking::where('room_id', $validated['room_id'])
+$conflict = Booking::where('room_id', $validated['room_id'])
     ->where('status', '!=', 'Cancelled')
     ->where(function ($query) use ($checkIn, $checkOut) {
-        $query->where('check_in', '<', $checkOut)
-              ->where('check_out', '>', $checkIn);
+        $query->where('check_in', '<=', $checkOut)
+              ->where('check_out', '>=', $checkIn);
     })
     ->exists();
+
 
 
         if ($conflict) {

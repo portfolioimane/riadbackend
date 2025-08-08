@@ -6,6 +6,9 @@ use App\Http\Controllers\Api\Admin\ServicesController as AdminServicesController
 
 use App\Http\Controllers\Api\Admin\RoomsController as AdminRoomsController;
 
+use App\Http\Controllers\Api\Admin\PaymentSettingsController;
+
+
 use App\Http\Controllers\Api\Admin\FinanceController;
 use App\Http\Controllers\Api\Admin\EmployeeController;
 use App\Http\Controllers\Api\Admin\CampaignController;
@@ -65,6 +68,13 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     Route::get('reports/summary', [ReportController::class, 'summary']);
     Route::get('reports/popular-rooms', [ReportController::class, 'popularRooms']);
     Route::get('reports/top-clients', [ReportController::class, 'topClients']);
+
+
+
+Route::get('/payment-settings', [PaymentSettingsController::class, 'index']);
+Route::get('/payment-settings/{id}', [PaymentSettingsController::class, 'show']);
+Route::put('/payment-settings/{id}', [PaymentSettingsController::class, 'update']);
+
 
 
 Route::get('gallery', [GalleryController::class, 'index']);
